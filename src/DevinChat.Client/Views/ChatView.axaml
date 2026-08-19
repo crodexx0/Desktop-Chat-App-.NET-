@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DevinChat.Client.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="960" d:DesignHeight="620"
+             x:Class="DevinChat.Client.Views.ChatView"
+             x:DataType="vm:ChatViewModel">
+
+    <Design.DataContext>
+        <vm:ChatViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="280,*" RowDefinitions="Auto,*,Auto">
+
+        <!-- Sidebar -->
+        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" BorderBrush="#22000000" BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+                <StackPanel Grid.Row="0" Spacing="2" Margin="0,0,0,12">
+                    <TextBlock Text="Signed in as" Opacity="0.6" FontSize="11" />
+                    <TextBlock Text="{Binding CurrentUserLabel}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Spacing="6" Margin="0,0,0,12">
+                    <TextBlock Text="Add someone by username" FontSize="11" Opacity="0.6" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox Grid.Column="0" Text="{Binding NewContactUserName}" Watermark="username" />
+                        <Button Grid.Column="1" Content="Add" Margin="6,0,0,0" Command="{Binding AddContactCommand}" />
+                    </Grid>
+                </StackPanel>
+
+                <ListBox Grid.Row="2"
+                         ItemsSource="{Binding Contacts}"
+                         SelectedItem="{Binding SelectedContact}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ContactViewModel">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+                                <Ellipse Grid.Column="1" Width="8" Height="8" Fill="#2E7D32"
+                                         VerticalAlignment="Center" IsVisible="{Binding HasUnread}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Button Grid.Row="3" Content="Sign out" Margin="0,12,0,0"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding SignOutCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Conversation header -->
+        <Border Grid.Row="0" Grid.Column="1" Padding="16,12" BorderBrush="#22000000" BorderThickness="0,0,0,1">
+            <TextBlock FontSize="16" FontWeight="SemiBold"
+                       Text="{Binding SelectedContact.Label, FallbackValue='Select or add a contact to start chatting'}" />
+        </Border>
+
+        <!-- Messages -->
+        <ScrollViewer Grid.Row="1" Grid.Column="1" Padding="16">
+            <ItemsControl ItemsSource="{Binding Messages}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:MessageViewModel">
+                        <Border Margin="0,4" Padding="10,6" CornerRadius="8" MaxWidth="440"
+                                HorizontalAlignment="{Binding Alignment}"
+                                Background="#1F1E88E5">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding TimeLabel}" FontSize="10" Opacity="0.6"
+                                           HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Composer -->
+        <StackPanel Grid.Row="2" Grid.Column="1" Margin="16,8,16,16" Spacing="6">
+            <TextBlock Text="{Binding StatusMessage}" FontSize="11" Opacity="0.7"
+                       IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding HasSelectedContact}">
+                <TextBox Grid.Column="0" Text="{Binding Draft}" Watermark="Type a message..."
+                         AcceptsReturn="False">
+                    <TextBox.KeyBindings>
+                        <KeyBinding Gesture="Enter" Command="{Binding SendCommand}" />
+                    </TextBox.KeyBindings>
+                </TextBox>
+                <Button Grid.Column="1" Content="Send" Margin="8,0,0,0" Command="{Binding SendCommand}" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

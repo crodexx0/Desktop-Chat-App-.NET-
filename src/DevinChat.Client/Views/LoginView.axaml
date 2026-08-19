@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DevinChat.Client.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="960" d:DesignHeight="620"
+             x:Class="DevinChat.Client.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Design.DataContext>
+        <vm:LoginViewModel />
+    </Design.DataContext>
+
+    <Border Padding="24">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                Width="380" Padding="28" CornerRadius="10"
+                BorderBrush="#22000000" BorderThickness="1">
+            <StackPanel Spacing="12">
+                <TextBlock Text="DevinChat" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock Text="Sign in to start chatting" Opacity="0.7" HorizontalAlignment="Center" />
+
+                <TextBlock Text="Server" Margin="0,8,0,0" />
+                <TextBox Text="{Binding ServerUrl}" Watermark="http://localhost:5099" />
+
+                <TextBlock Text="Username" />
+                <TextBox Name="UserNameBox" Text="{Binding UserName}" Watermark="e.g. alice" />
+
+                <StackPanel Spacing="6" IsVisible="{Binding IsRegisterMode}">
+                    <TextBlock Text="Display name" />
+                    <TextBox Text="{Binding DisplayName}" Watermark="e.g. Alice Smith" />
+                </StackPanel>
+
+                <TextBlock Text="Password" />
+                <TextBox Text="{Binding Password}" PasswordChar="•" Watermark="At least 6 characters" />
+
+                <Button Content="{Binding SubmitText}"
+                        Command="{Binding SubmitCommand}"
+                        IsEnabled="{Binding !IsBusy}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Margin="0,8,0,0" />
+
+                <Button Content="{Binding ToggleText}"
+                        Command="{Binding ToggleModeCommand}"
+                        Background="Transparent"
+                        HorizontalAlignment="Center" />
+
+                <TextBlock Text="{Binding ErrorMessage}"
+                           IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                           Foreground="#C62828" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </Border>
+</UserControl>
